@@ -1,0 +1,6 @@
+VotingTest:test_GetWinner() (gas: 226182)
+VotingTest:test_InvalidItemId() (gas: 30189)
+VotingTest:test_ProposeItem() (gas: 84049)
+VotingTest:test_ProposeItemInvalid() (gas: 12803)
+VotingTest:test_UserAlreadyVoted() (gas: 69152)
+VotingTest:test_VoteForItem() (gas: 196938)
