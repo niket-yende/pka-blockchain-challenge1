@@ -4,7 +4,7 @@ pragma solidity 0.8.24;
 contract Voting {
     uint256 public itemId;
     
-    mapping(uint256 => uint64) private votes;
+    mapping(uint256 => uint64) public votes;
     mapping(address => bool) private hasVoted;
     uint[] public items;
 

@@ -7,19 +7,66 @@ import "forge-std/console.sol";
 
 contract VotingTest is Test {
     Voting public voting;
+    address userOne = address(1);
+    address userTwo = address(2);
+    address userThree = address(3);
+    address userFour = address(4);
+    address userFive = address(5);
 
     function setUp() public {
         voting = new Voting();
-    }
-
-    function test_ProposeItem() public {
         // Propose some items
         voting.proposeItem("Banana");
         voting.proposeItem("Coffee");
         voting.proposeItem("Tea");
         voting.proposeItem("Beer");
         voting.proposeItem("Water");
+    }
 
-        assertEq(voting.itemId(), 5);
+    function test_ProposeItem() public {
+        voting.proposeItem("Coca Cola");
+
+        assertEq(voting.itemId(), 6);
+    }
+
+    function test_ProposeItemInvalid() public {
+        // Propose empty
+        vm.expectRevert("Item must be present");
+        voting.proposeItem("");
+
+        console.log('Propose items length check passed');
+    }
+
+    function test_VoteForItem() public {
+        // Vote for item
+        vm.prank(userOne);
+        voting.voteForItem(1);
+
+        vm.prank(userTwo);
+        voting.voteForItem(5);
+
+        vm.prank(userThree);
+        voting.voteForItem(5);
+
+        vm.prank(userFour);
+        voting.voteForItem(4);
+        
+        // Check if the votes for items have been updated
+        assertEq(voting.votes(1), 1);
+        assertEq(voting.votes(2), 0);
+        assertEq(voting.votes(3), 0);
+        assertEq(voting.votes(4), 1);
+        assertEq(voting.votes(5), 2);
+    }
+
+    function test_InvalidItemId() public {
+        // Vote for item
+        vm.prank(userOne);
+        vm.expectRevert("Provide valid Item id");
+        voting.voteForItem(100);
+
+        vm.prank(userTwo);
+        vm.expectRevert("Provide valid Item id");
+        voting.voteForItem(0);
     }
 }
