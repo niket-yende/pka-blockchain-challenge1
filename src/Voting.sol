@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-contract Voting {
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+
+contract Voting is ReentrancyGuard {
     uint256 public itemId;
     
     mapping(uint256 => uint64) public votes;
@@ -14,6 +16,8 @@ contract Voting {
     }
     mapping(uint256 => Item) itemMap;
 
+    event VoteSubmitted(address _voter);
+
     constructor() {}
 
     function proposeItem(string calldata _item) external returns (uint256) {
@@ -24,9 +28,15 @@ contract Voting {
         return itemId;
     }
 
-    function voteForItem(uint256 _itemId) external {
+    function voteForItem(uint256 _itemId) external nonReentrant {
+        // Check required conditions
         require(_itemId > 0 && _itemId <= items.length, 'Provide valid Item id');
         require(!hasVoted[msg.sender], 'User already voted');
+        
+        // Emit the vote submitted event
+        emit VoteSubmitted(msg.sender);
+
+        // Store user vote for an itemId
         hasVoted[msg.sender] = true;
         votes[_itemId]++; 
     }
