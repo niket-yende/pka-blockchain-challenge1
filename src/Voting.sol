@@ -31,7 +31,7 @@ contract Voting {
         votes[_itemId]++; 
     }
 
-    function getWinner() public view returns(Item memory) {
+    function getWinner() public view returns (uint, string memory) {
         uint highestVote = 0;
         Item memory winner;
         for (uint256 index = 1; index <= items.length; index++) {
@@ -42,6 +42,6 @@ contract Voting {
                 winner = item;
             }
         }
-        return winner;
+        return (winner.ID, winner.Name);
     }
 }

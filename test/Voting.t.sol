@@ -68,5 +68,38 @@ contract VotingTest is Test {
         vm.prank(userTwo);
         vm.expectRevert("Provide valid Item id");
         voting.voteForItem(0);
+
+        console.log('Invalid item id test passed');
+    }
+
+    function test_UserAlreadyVoted() public {
+        // Vote for item
+        vm.prank(userOne);
+        voting.voteForItem(1);
+        vm.prank(userOne);
+        vm.expectRevert("User already voted");
+        voting.voteForItem(1);
+
+        console.log('User already voted test passed');
+    }
+
+    function test_GetWinner() public {
+        // Vote for item
+        vm.prank(userOne);
+        voting.voteForItem(1);
+
+        vm.prank(userTwo);
+        voting.voteForItem(5);
+
+        vm.prank(userThree);
+        voting.voteForItem(5);
+
+        vm.prank(userFour);
+        voting.voteForItem(4);
+
+        (uint ID, string memory Name) = voting.getWinner();
+        console.log("Winner - {'ID': %d, 'Name': %s}", ID, Name);
+
+        console.log("Votes received for %s = %d", Name, voting.votes(ID));
     }
 }
