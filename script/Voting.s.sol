@@ -6,12 +6,12 @@ import {Voting} from "../src/Voting.sol";
 import "forge-std/console.sol";
 
 contract VotingScript is Script {
-    function setUp() public {}
+    uint64 public constant ITEM_LIMIT = 10;
 
     function run() public {
         vm.broadcast();
         // Deploy voting contract
-        Voting voting = new Voting();
-        console.log('Deployed Voting address: ', address(voting));
+        Voting voting = new Voting(ITEM_LIMIT);
+        console.log("Deployed Voting address: ", address(voting));
     }
 }

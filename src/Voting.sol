@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract Voting is ReentrancyGuard {
     uint256 public itemId;
+    uint64 public immutable itemLimit;
     
     mapping(uint256 => uint64) public votes;
     mapping(address => bool) private hasVoted;
@@ -15,17 +16,23 @@ contract Voting is ReentrancyGuard {
         string Name;
     }
     mapping(uint256 => Item) itemMap;
+    mapping(string => bool) public itemExist;
 
     event VoteSubmitted(address _voter);
 
-    constructor() {}
+    constructor(uint64 _itemLimit) {
+        itemLimit = _itemLimit;
+    }
 
     function proposeItem(string calldata _item) external returns (uint256) {
         require(bytes(_item).length > 0, 'Item must be present');
-        itemId++;
-        itemMap[itemId] = Item(itemId, _item);
-        items.push(itemId);
-        return itemId;
+        uint _itemId = itemId++;
+        // Item limit added to protect contract from denial of service (Sybil attack)
+        require(itemId <= itemLimit, "Exceeded item limit");
+        // itemId++;
+        itemMap[_itemId] = Item(_itemId, _item);
+        items.push(_itemId);
+        return _itemId;
     }
 
     function voteForItem(uint256 _itemId) external nonReentrant {
@@ -43,7 +50,6 @@ contract Voting is ReentrancyGuard {
 
     function getWinner() public view returns (uint, string memory) {
         uint highestVote = 0;
-        uint sameVoteCount = 0;
         // Local caching
         uint[] memory _items = items;
         Item memory winner = itemMap[0];
@@ -57,12 +63,8 @@ contract Voting is ReentrancyGuard {
                 winner = item;
                 initialized = true;
             }
-            if(itemVotes == highestVote) {
-                sameVoteCount++;
-            }
         }
         require(initialized, "No winner found");
-        require(sameVoteCount != _items.length, "Equal votes for all items");
         return (winner.ID, winner.Name);
     }
 }

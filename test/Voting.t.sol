@@ -12,9 +12,10 @@ contract VotingTest is Test {
     address userThree = address(3);
     address userFour = address(4);
     address userFive = address(5);
+    uint64 public constant ITEM_LIMIT = 10;
 
     function setUp() public {
-        voting = new Voting();
+        voting = new Voting(ITEM_LIMIT);
         // Propose some items
         voting.proposeItem("Banana");
         voting.proposeItem("Coffee");
@@ -35,6 +36,16 @@ contract VotingTest is Test {
         voting.proposeItem("");
 
         console.log('Propose items length check passed');
+    }
+
+    function test_ItemLimitExceeded() public {
+        for (uint index = 0; index < 5; index++) {
+            voting.proposeItem(string(abi.encodePacked("Fruit Juice", index)));
+        }
+        vm.expectRevert("Exceeded item limit");
+        voting.proposeItem("Grape Juice");
+
+        console.log('Item limit exceed test passed');
     }
 
     function test_VoteForItem() public {
@@ -109,28 +120,5 @@ contract VotingTest is Test {
         voting.getWinner();
 
         console.log('No winner test passed');
-    }
-
-    function test_EqualVotes() public {
-        // Vote for item: every item receives 1 vote
-        vm.prank(userOne);
-        voting.voteForItem(1);
-
-        vm.prank(userTwo);
-        voting.voteForItem(2);
-
-        vm.prank(userThree);
-        voting.voteForItem(3);
-
-        vm.prank(userFour);
-        voting.voteForItem(4);
-
-        vm.prank(userFive);
-        voting.voteForItem(5);
-        
-        vm.expectRevert("Equal votes for all items");
-        voting.getWinner();
-
-        console.log('No winner for equal vote test passed');
     }
 }
