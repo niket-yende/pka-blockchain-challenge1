@@ -50,7 +50,8 @@ https://book.getfoundry.sh/
 1. Solidity - Programming language to implement smart contracts like `Voting.sol`.
 1. Faundry - It is a blazing fast, portable and modular toolkit for Ethereum application development.
 1. forge-std - Forge Standard Library is a collection of helpful contracts and libraries for use with Forge and Foundry. It is used to implement smart contract test cases like `Voting.t.sol`.
-1. openzeppelin-contracts - A library for secure smart contract development. Used for importing ReentrancyGuard contract. 
+1. openzeppelin-contracts - A library for secure smart contract development. Used for importing ReentrancyGuard contract.
+1. Slither - Static code analysis tool for solidity contracts. 
 
 ## Usage
 
