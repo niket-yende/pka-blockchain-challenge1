@@ -26,11 +26,12 @@ contract Voting is ReentrancyGuard {
 
     function proposeItem(string calldata _item) external returns (uint256) {
         require(bytes(_item).length > 0, 'Item must be present');
+        require(!itemExist[_item], 'Duplicate item added');
         uint _itemId = itemId++;
         // Item limit added to protect contract from denial of service (Sybil attack)
         require(itemId <= itemLimit, "Exceeded item limit");
-        // itemId++;
         itemMap[_itemId] = Item(_itemId, _item);
+        itemExist[_item] = true;
         items.push(_itemId);
         return _itemId;
     }

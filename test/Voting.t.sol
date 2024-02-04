@@ -38,6 +38,14 @@ contract VotingTest is Test {
         console.log('Propose items length check passed');
     }
 
+    function test_DuplicateItemProposed() public {
+        // Propose existing item
+        vm.expectRevert("Duplicate item added");
+        voting.proposeItem("Banana");
+
+        console.log('Propose duplicate item test passed');
+    }
+
     function test_ItemLimitExceeded() public {
         for (uint index = 0; index < 5; index++) {
             voting.proposeItem(string(abi.encodePacked("Fruit Juice", index)));
