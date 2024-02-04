@@ -43,15 +43,21 @@ contract Voting is ReentrancyGuard {
 
     function getWinner() public view returns (uint, string memory) {
         uint highestVote = 0;
-        Item memory winner;
-        for (uint256 index = 1; index <= items.length; index++) {
+        // Local caching
+        uint[] memory _items = items;
+        Item memory winner = itemMap[0];
+        bool initialized = false;
+        
+        for (uint256 index = 1; index <= _items.length; index++) {
             Item memory item = itemMap[index];
             uint256 itemVotes = votes[item.ID];
             if(itemVotes > highestVote) {
                 highestVote = itemVotes;
                 winner = item;
+                initialized = true;
             }
         }
+        require(initialized, "No winner found");
         return (winner.ID, winner.Name);
     }
 }
