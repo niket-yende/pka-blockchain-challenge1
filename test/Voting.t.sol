@@ -102,4 +102,35 @@ contract VotingTest is Test {
 
         console.log("Votes received for %s = %d", Name, voting.votes(ID));
     }
+
+    function test_NoWinner() public {
+        // No one votes - every item has 0 votes
+        vm.expectRevert("No winner found");
+        voting.getWinner();
+
+        console.log('No winner test passed');
+    }
+
+    function test_EqualVotes() public {
+        // Vote for item: every item receives 1 vote
+        vm.prank(userOne);
+        voting.voteForItem(1);
+
+        vm.prank(userTwo);
+        voting.voteForItem(2);
+
+        vm.prank(userThree);
+        voting.voteForItem(3);
+
+        vm.prank(userFour);
+        voting.voteForItem(4);
+
+        vm.prank(userFive);
+        voting.voteForItem(5);
+        
+        vm.expectRevert("Equal votes for all items");
+        voting.getWinner();
+
+        console.log('No winner for equal vote test passed');
+    }
 }

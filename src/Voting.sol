@@ -43,6 +43,7 @@ contract Voting is ReentrancyGuard {
 
     function getWinner() public view returns (uint, string memory) {
         uint highestVote = 0;
+        uint sameVoteCount = 0;
         // Local caching
         uint[] memory _items = items;
         Item memory winner = itemMap[0];
@@ -56,8 +57,12 @@ contract Voting is ReentrancyGuard {
                 winner = item;
                 initialized = true;
             }
+            if(itemVotes == highestVote) {
+                sameVoteCount++;
+            }
         }
         require(initialized, "No winner found");
+        require(sameVoteCount != _items.length, "Equal votes for all items");
         return (winner.ID, winner.Name);
     }
 }
